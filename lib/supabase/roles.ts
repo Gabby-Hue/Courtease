@@ -18,7 +18,7 @@ export async function getProfileWithRole(): Promise<ProfileWithRole | null> {
 
   if (!user) {
     return null;
-  }
+  }kd
 
   const { data: profile, error } = await supabase
     .from("profiles")
