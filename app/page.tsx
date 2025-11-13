@@ -7,6 +7,7 @@ import {
   Clock4,
   Sparkles,
 } from "lucide-react";
+import { JaggedEdge } from "@/components/jagged-edge";
 import { Button } from "@/components/ui/button";
 
 const featureHighlights = [
@@ -289,19 +290,22 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <footer className="border-t border-slate-200/80 bg-white/80 py-10 backdrop-blur dark:border-slate-800/60 dark:bg-slate-950/60">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-4 text-center text-sm text-slate-500 sm:flex-row sm:px-6 sm:text-left lg:px-8 dark:text-slate-400">
-          <p>
+      <footer className="relative overflow-hidden bg-slate-950 py-14 text-slate-100 shadow-[0_-12px_32px_rgba(2,6,23,0.3)]">
+        <div className="pointer-events-none absolute inset-x-0 -top-[10px] text-slate-950">
+          <JaggedEdge orientation="up" className="h-6" />
+        </div>
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-4 text-center text-sm text-slate-300 sm:flex-row sm:px-6 sm:text-left lg:px-8">
+          <p className="text-sm">
             © {new Date().getFullYear()} Courtease. Semua hak cipta dilindungi.
           </p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Link href="/privacy" className="hover:text-brand-strong">
+          <div className="flex flex-wrap items-center gap-4 text-sm font-medium">
+            <Link href="/privacy" className="transition hover:text-white">
               Kebijakan Privasi
             </Link>
-            <Link href="/terms" className="hover:text-brand-strong">
+            <Link href="/terms" className="transition hover:text-white">
               Syarat & Ketentuan
             </Link>
-            <Link href="/forum" className="hover:text-brand-strong">
+            <Link href="/forum" className="transition hover:text-white">
               Forum Komunitas
             </Link>
           </div>
