@@ -249,6 +249,11 @@ export function CourteaseNavbar() {
 
   const trimmedQuery = query.trim();
 
+  const handleMobileToggle = () => {
+    setOpenSearch(false);
+    setMobileOpen((prev) => !prev);
+  };
+
   return (
     <header className="relative isolate sticky top-0 z-50 w-full bg-slate-950/95 text-slate-100 shadow-[0_12px_32px_rgba(2,6,23,0.35)] backdrop-blur">
       <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -296,7 +301,7 @@ export function CourteaseNavbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div ref={searchContainerRef} className="relative flex items-center">
+          <div ref={searchContainerRef} className="relative flex items-center gap-2">
             <Button
               variant="outline"
               className="hidden min-w-60 items-center gap-3 rounded-full border-white/15 bg-white/10 px-5 py-3 text-sm font-medium text-slate-100 shadow-sm transition hover:border-brand/60 hover:bg-brand/20 hover:text-white md:flex"
@@ -310,10 +315,22 @@ export function CourteaseNavbar() {
                 Ctrl + K
               </kbd>
             </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-white/15 text-white md:hidden"
+              onClick={() => {
+                setMobileOpen(false);
+                setOpenSearch(true);
+              }}
+              aria-label="Buka pencarian"
+            >
+              <Search className="h-5 w-5" />
+            </Button>
             <ModeToggle />
 
             {openSearch && (
-              <div className="absolute right-0 top-[calc(100%+12px)] z-[70] w-[min(100vw-2rem,640px)] rounded-3xl border border-slate-200/90 bg-white/95 p-6 shadow-xl ring-1 ring-slate-100 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/95 dark:ring-slate-800/40">
+              <div className="absolute left-1/2 top-[calc(100%+12px)] z-[70] w-[min(100vw-1.5rem,640px)] -translate-x-1/2 rounded-3xl border border-slate-200/90 bg-white/95 p-5 shadow-xl ring-1 ring-slate-100 backdrop-blur dark:border-slate-700/70 dark:bg-slate-900/95 dark:ring-slate-800/40 md:left-auto md:right-0 md:w-[min(100vw-2rem,640px)] md:translate-x-0 md:p-6 md:max-h-none md:overflow-visible max-h-[calc(100vh-120px)] overflow-y-auto">
                 <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-700 dark:bg-slate-800">
                   <Search className="h-4 w-4 text-slate-400" />
                   <input
@@ -489,10 +506,11 @@ export function CourteaseNavbar() {
               variant="outline"
               size="icon"
               className="border-white/15 text-white"
-              onClick={() => setMobileOpen((prev) => !prev)}
-              aria-label="Open menu"
+              onClick={handleMobileToggle}
+              aria-expanded={mobileOpen}
+              aria-label={mobileOpen ? "Tutup menu" : "Buka menu"}
             >
-              <Menu className="h-5 w-5" />
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
@@ -553,6 +571,17 @@ export function CourteaseNavbar() {
                 })}
               </div>
               <div className="mt-6 space-y-4">
+                <Button
+                  variant="outline"
+                  className="flex w-full items-center gap-3 rounded-2xl border-white/15 bg-white/5 px-4 py-3 text-sm text-slate-100 shadow-sm transition hover:border-brand/60 hover:bg-brand/20 hover:text-white"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    setOpenSearch(true);
+                  }}
+                >
+                  <Search className="h-4 w-4" />
+                  <span>Cari courts, venues, atau forum…</span>
+                </Button>
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm backdrop-blur-sm">
                   <div className="flex items-center justify-between gap-4">
                     <div className="space-y-1">
@@ -563,6 +592,7 @@ export function CourteaseNavbar() {
                         Pilih tampilan terang atau gelap sesuai kenyamananmu.
                       </p>
                     </div>
+                    <ModeToggle />
                   </div>
                 </div>
                 <NavbarAuthMenu
