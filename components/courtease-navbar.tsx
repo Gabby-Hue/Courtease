@@ -12,7 +12,6 @@ import {
   X,
 } from "lucide-react";
 import { NavbarAuthMenu } from "@/components/navbar-auth-menu";
-import { JaggedEdge } from "@/components/jagged-edge";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "./mode-toggle";
 
@@ -516,10 +515,10 @@ export function CourteaseNavbar() {
         </div>
       </nav>
 
-      <div className="pointer-events-none absolute inset-x-0 -bottom-[18px] text-white dark:text-slate-900">
-        <JaggedEdge
-          orientation="down"
-          className="h-[18px] drop-shadow-[0_10px_18px_rgba(2,6,23,0.35)] dark:drop-shadow-[0_10px_18px_rgba(15,23,42,0.45)]"
+      <div className="pointer-events-none absolute inset-x-0 -bottom-[18px]">
+        <div
+          aria-hidden
+          className="mask-zigzag-bottom h-[18px] w-full bg-slate-950 drop-shadow-[0_10px_18px_rgba(2,6,23,0.35)] dark:bg-slate-900 dark:drop-shadow-[0_10px_18px_rgba(15,23,42,0.45)]"
         />
       </div>
 
