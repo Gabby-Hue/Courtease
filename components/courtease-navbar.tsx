@@ -3,7 +3,6 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import {
   ArrowUpRight,
   MapPin,
@@ -13,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { NavbarAuthMenu } from "@/components/navbar-auth-menu";
+import { JaggedEdge } from "@/components/jagged-edge";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "./mode-toggle";
 
@@ -250,14 +250,14 @@ export function CourteaseNavbar() {
   const trimmedQuery = query.trim();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[#E5E7EB]/80 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:border-slate-800/70 dark:bg-slate-950/70">
+    <header className="relative isolate sticky top-0 z-50 w-full bg-slate-950/95 text-slate-100 shadow-[0_12px_32px_rgba(2,6,23,0.35)] backdrop-blur">
       <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <Link href="/" className="group flex items-center gap-2">
             <div className="relative grid h-11 w-11 place-items-center rounded-2xl bg-brand text-white shadow-sm shadow-brand/30">
               <Volleyball className="h-6 w-6 transition-transform duration-300 group-hover:-rotate-12" />
             </div>
-            <span className="text-lg font-semibold tracking-tight text-slate-800 dark:text-slate-100">
+            <span className="text-lg font-semibold tracking-tight text-white">
               Court<span className="text-brand">Ease</span>
             </span>
           </Link>
@@ -274,8 +274,8 @@ export function CourteaseNavbar() {
                 href={link.href}
                 className={`relative rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
                   active
-                    ? "text-slate-900 dark:text-white"
-                    : "text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                    ? "text-white"
+                    : "text-slate-200 hover:text-white"
                 }`}
               >
                 <span
@@ -285,8 +285,8 @@ export function CourteaseNavbar() {
                   style={{
                     background:
                       "linear-gradient(135deg, hsl(var(--brand)) 0%, hsl(var(--brand-strong)) 100%)",
-                    boxShadow: "0 2px 10px hsla(var(--brand),0.25)",
-                    opacity: active ? 0.18 : 0,
+                    boxShadow: "0 6px 16px hsla(var(--brand),0.4)",
+                    opacity: active ? 0.35 : 0,
                   }}
                 />
                 {link.label}
@@ -299,7 +299,7 @@ export function CourteaseNavbar() {
           <div ref={searchContainerRef} className="relative flex items-center">
             <Button
               variant="outline"
-              className="hidden min-w-60 items-center gap-3 rounded-full border-[#E5E7EB] bg-white/90 px-5 py-3 text-sm font-medium text-slate-600 shadow-sm transition hover:border-brand hover:text-brand-strong dark:border-slate-700/70 dark:bg-slate-900/70 dark:text-slate-300 md:flex"
+              className="hidden min-w-60 items-center gap-3 rounded-full border-white/15 bg-white/10 px-5 py-3 text-sm font-medium text-slate-100 shadow-sm transition hover:border-brand/60 hover:bg-brand/20 hover:text-white md:flex"
               onClick={() => setOpenSearch(true)}
             >
               <Search className="h-4 w-4" />
@@ -488,7 +488,7 @@ export function CourteaseNavbar() {
             <Button
               variant="outline"
               size="icon"
-              className="border-slate-200 dark:border-slate-800"
+              className="border-white/15 text-white"
               onClick={() => setMobileOpen((prev) => !prev)}
               aria-label="Open menu"
             >
@@ -498,17 +498,21 @@ export function CourteaseNavbar() {
         </div>
       </nav>
 
+      <div className="pointer-events-none absolute inset-x-0 -bottom-[10px] text-slate-950">
+        <JaggedEdge orientation="down" className="h-6" />
+      </div>
+
       {mobileOpen && (
         <div className="fixed inset-0 z-[60]">
           <div
-            className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity dark:bg-slate-950/70"
+            className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity"
             onClick={() => setMobileOpen(false)}
           />
           <div className="absolute inset-x-0 top-0 flex justify-center px-3 pt-2">
-            <div className="w-full max-w-lg origin-top animate-in fade-in slide-in-from-top-6 rounded-b-3xl border p-6 shadow-2xl transition dark:shadow-slate-950/40">
+            <div className="w-full max-w-lg origin-top animate-in fade-in slide-in-from-top-6 rounded-b-3xl border border-white/10 bg-slate-950/95 p-6 text-slate-100 shadow-2xl shadow-slate-950/50 backdrop-blur transition">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-slate-800 dark:text-slate-100">
-                  <span className="inline-grid h-9 w-9 place-items-center rounded-2xl bg-brand text-white">
+                <div className="flex items-center gap-2 text-white">
+                  <span className="inline-grid h-9 w-9 place-items-center rounded-2xl bg-brand text-white shadow shadow-brand/40">
                     <Volleyball className="h-5 w-5" />
                   </span>
                   <span className="font-semibold">
@@ -535,8 +539,8 @@ export function CourteaseNavbar() {
                       href={link.href}
                       className={`rounded-xl px-3 py-2 text-base font-medium transition-colors ${
                         active
-                          ? "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white"
-                          : "text-slate-600 hover:bg-slate-100/70 dark:text-slate-300 dark:hover:bg-slate-800/60"
+                          ? "bg-white/10 text-white"
+                          : "text-slate-200 hover:bg-white/5"
                       }`}
                       onClick={() => setMobileOpen(false)}
                     >
@@ -546,13 +550,13 @@ export function CourteaseNavbar() {
                 })}
               </div>
               <div className="mt-6 space-y-4">
-                <div className="rounded-2xl border border-slate-200/70 bg-white/70 p-4 shadow-sm backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-900/60">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm backdrop-blur-sm">
                   <div className="flex items-center justify-between gap-4">
                     <div className="space-y-1">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                      <p className="text-sm font-semibold text-white">
                         Mode tampilan
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-slate-300">
                         Pilih tampilan terang atau gelap sesuai kenyamananmu.
                       </p>
                     </div>
