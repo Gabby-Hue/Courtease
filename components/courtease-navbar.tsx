@@ -498,8 +498,11 @@ export function CourteaseNavbar() {
         </div>
       </nav>
 
-      <div className="pointer-events-none absolute inset-x-0 -bottom-[10px] text-slate-950">
-        <JaggedEdge orientation="down" className="h-6" />
+      <div className="pointer-events-none absolute inset-x-0 -bottom-[18px] text-white dark:text-slate-900">
+        <JaggedEdge
+          orientation="down"
+          className="h-[18px] drop-shadow-[0_10px_18px_rgba(2,6,23,0.35)] dark:drop-shadow-[0_10px_18px_rgba(15,23,42,0.45)]"
+        />
       </div>
 
       {mobileOpen && (

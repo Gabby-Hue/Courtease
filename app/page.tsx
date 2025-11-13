@@ -291,8 +291,11 @@ export default function Home() {
         </section>
       </main>
       <footer className="relative overflow-hidden bg-slate-950 py-14 text-slate-100 shadow-[0_-12px_32px_rgba(2,6,23,0.3)]">
-        <div className="pointer-events-none absolute inset-x-0 -top-[10px] text-slate-950">
-          <JaggedEdge orientation="up" className="h-6" />
+        <div className="pointer-events-none absolute inset-x-0 -top-[18px] text-slate-950 dark:text-slate-900">
+          <JaggedEdge
+            orientation="up"
+            className="h-[18px] drop-shadow-[0_-12px_20px_rgba(2,6,23,0.28)] dark:drop-shadow-[0_-12px_20px_rgba(15,23,42,0.5)]"
+          />
         </div>
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-4 text-center text-sm text-slate-300 sm:flex-row sm:px-6 sm:text-left lg:px-8">
           <p className="text-sm">
