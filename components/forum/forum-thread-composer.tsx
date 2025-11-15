@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import type { ForumCategory, ForumThreadSummary } from "@/lib/supabase/queries";
 import { CheckCircle2, ChevronDown, PenSquare } from "lucide-react";
@@ -24,7 +24,6 @@ type ForumThreadComposerProps = {
 
 export function ForumThreadComposer({ categories, onThreadCreated }: ForumThreadComposerProps) {
   const router = useRouter();
-  const { pushToast } = useToast();
 
   const [title, setTitle] = useState("");
   const [categoryId, setCategoryId] = useState<string | "">("");
@@ -52,10 +51,8 @@ export function ForumThreadComposer({ categories, onThreadCreated }: ForumThread
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!title.trim()) {
-      pushToast({
-        title: "Judul diperlukan",
+      toast.info("Judul diperlukan", {
         description: "Tulis judul yang jelas untuk memulai diskusi.",
-        variant: "info",
       });
       return;
     }
@@ -66,10 +63,8 @@ export function ForumThreadComposer({ categories, onThreadCreated }: ForumThread
     } = await supabase.auth.getUser();
 
     if (!user) {
-      pushToast({
-        title: "Perlu login",
+      toast.info("Perlu login", {
         description: "Masuk dulu sebelum membuat thread baru.",
-        variant: "info",
       });
       return;
     }
@@ -161,16 +156,14 @@ export function ForumThreadComposer({ categories, onThreadCreated }: ForumThread
             } = await supabase.auth.getUser();
 
             if (!user) {
-              pushToast({
-                title: "Sesi habis",
+              toast.info("Sesi habis", {
                 description: "Masuk kembali sebelum menerbitkan thread.",
-                variant: "info",
               });
               setIsSubmitting(false);
               setShowConfirm(false);
               setIsAuthenticated(false);
-                return;
-              }
+              return;
+            }
 
             const normalizedTags = tags
               .split(",")
@@ -217,10 +210,8 @@ export function ForumThreadComposer({ categories, onThreadCreated }: ForumThread
 
             if (error || !threadRow) {
               console.error("Failed to create forum thread", error?.message);
-              pushToast({
-                title: "Gagal membuat thread",
+              toast.error("Gagal membuat thread", {
                 description: error?.message ?? "Terjadi kesalahan tak terduga.",
-                variant: "error",
               });
               setIsSubmitting(false);
               setShowConfirm(false);
@@ -250,10 +241,8 @@ export function ForumThreadComposer({ categories, onThreadCreated }: ForumThread
             setCategoryId("");
 
             onThreadCreated?.(newThread);
-            pushToast({
-              title: "Thread baru ditayangkan",
+            toast.success("Thread baru ditayangkan", {
               description: "Diskusi kamu sudah bisa dilihat komunitas.",
-              variant: "success",
             });
             setIsSubmitting(false);
             setExpanded(false);

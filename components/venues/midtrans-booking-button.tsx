@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import Script from "next/script";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 
 declare global {
@@ -43,37 +43,30 @@ export function MidtransBookingButton({
   selectedSlot,
   notes,
 }: MidtransBookingButtonProps) {
-  const { pushToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [snapReady, setSnapReady] = useState(false);
 
   const handleClick = useCallback(async () => {
     if (!isConfigured) {
-      pushToast({
-        title: "Midtrans belum siap",
+      toast.info("Midtrans belum siap", {
         description: "Hubungi admin untuk mengaktifkan pembayaran online.",
-        variant: "info",
       });
       return;
     }
 
     if (!isBookingAllowed) {
-      pushToast({
-        title: "Akses booking dibatasi",
+      toast.info("Akses booking dibatasi", {
         description:
           disallowedMessage ??
           "Akun kamu tidak memiliki akses untuk melakukan booking dari halaman ini.",
-        variant: "info",
       });
       return;
     }
 
     if (!selectedSlot) {
-      pushToast({
-        title: "Atur jadwal booking",
+      toast.info("Atur jadwal booking", {
         description:
           "Pilih tanggal, jam mulai, dan durasi sebelum melanjutkan pembayaran.",
-        variant: "info",
       });
       return;
     }
@@ -87,10 +80,8 @@ export function MidtransBookingButton({
       } = await supabase.auth.getUser();
 
       if (!user) {
-        pushToast({
-          title: "Perlu login",
+        toast.info("Perlu login", {
           description: "Masuk sebagai pemain untuk melanjutkan proses booking.",
-          variant: "info",
         });
         return;
       }
@@ -129,48 +120,38 @@ export function MidtransBookingButton({
       if (window.snap && typeof window.snap.pay === "function" && snapReady) {
         window.snap.pay(token, {
           onSuccess: () => {
-            pushToast({
-              title: "Pembayaran berhasil",
+            toast.success("Pembayaran berhasil", {
               description: "Transaksi kamu tercatat di Midtrans.",
-              variant: "success",
             });
             window.location.assign(successRedirectUrl);
           },
           onPending: () => {
-            pushToast({
-              title: "Menunggu pembayaran",
+            toast.info("Menunggu pembayaran", {
               description:
                 "Kamu bisa melanjutkan pembayaran kapan pun dari dashboard.",
-              variant: "info",
             });
           },
           onError: (error) => {
             console.error("Midtrans Snap error", error);
-            pushToast({
-              title: "Pembayaran dibatalkan",
+            toast.error("Pembayaran dibatalkan", {
               description: "Coba ulangi proses transaksi dari dashboard.",
-              variant: "error",
             });
           },
         });
       } else if (redirectUrl) {
         window.location.href = redirectUrl;
       } else {
-        pushToast({
-          title: "Token Midtrans siap",
+        toast.info("Token Midtrans siap", {
           description: token,
-          variant: "info",
         });
       }
     } catch (error) {
       console.error("Failed to start Midtrans payment", error);
-      pushToast({
-        title: "Gagal memulai pembayaran",
+      toast.error("Gagal memulai pembayaran", {
         description:
           error instanceof Error
             ? error.message
             : "Terjadi kesalahan tak terduga.",
-        variant: "error",
       });
     } finally {
       setIsLoading(false);
@@ -181,7 +162,6 @@ export function MidtransBookingButton({
     isBookingAllowed,
     isConfigured,
     notes,
-    pushToast,
     selectedSlot,
     snapReady,
   ]);

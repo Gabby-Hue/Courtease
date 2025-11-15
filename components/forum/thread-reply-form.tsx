@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
+import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import type { ForumReply } from "@/lib/supabase/queries";
 
@@ -17,7 +17,6 @@ type ThreadReplyFormProps = {
 };
 
 export function ThreadReplyForm({ threadId, onReplyCreated }: ThreadReplyFormProps) {
-  const { pushToast } = useToast();
   const [body, setBody] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -37,10 +36,8 @@ export function ThreadReplyForm({ threadId, onReplyCreated }: ThreadReplyFormPro
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!body.trim()) {
-      pushToast({
-        title: "Balasan kosong",
+      toast.info("Balasan kosong", {
         description: "Tulis pesan sebelum mengirim balasan.",
-        variant: "info",
       });
       return;
     }
@@ -53,10 +50,8 @@ export function ThreadReplyForm({ threadId, onReplyCreated }: ThreadReplyFormPro
     } = await supabase.auth.getUser();
 
     if (!user) {
-      pushToast({
-        title: "Perlu login",
+      toast.info("Perlu login", {
         description: "Masuk dulu untuk ikut berdiskusi.",
-        variant: "info",
       });
       setIsSubmitting(false);
       return;
@@ -84,10 +79,8 @@ export function ThreadReplyForm({ threadId, onReplyCreated }: ThreadReplyFormPro
     if (error || !replyRow) {
       const errorMessage = error?.message ?? "Terjadi kesalahan tak terduga.";
       console.error("Failed to create reply", errorMessage);
-      pushToast({
-        title: "Gagal mengirim balasan",
+      toast.error("Gagal mengirim balasan", {
         description: errorMessage,
-        variant: "error",
       });
       setIsSubmitting(false);
       return;
@@ -102,10 +95,8 @@ export function ThreadReplyForm({ threadId, onReplyCreated }: ThreadReplyFormPro
     };
 
     setBody("");
-    pushToast({
-      title: "Balasan terkirim",
+    toast.success("Balasan terkirim", {
       description: "Diskusi kamu sudah tayang.",
-      variant: "success",
     });
     setIsSubmitting(false);
     onReplyCreated?.(mappedReply);

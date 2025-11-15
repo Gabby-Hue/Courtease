@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CalendarClock, ChevronLeft, ChevronRight } from "lucide-react";
 
-import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 import { MidtransBookingButton } from "@/components/venues/midtrans-booking-button";
 
@@ -139,7 +139,6 @@ export function BookingScheduler({
   isBookingAllowed,
   disallowedMessage,
 }: BookingSchedulerProps) {
-  const { pushToast } = useToast();
   const today = startOfDay(new Date());
   const maxBookingDate = useMemo(() => {
     const limit = startOfDay(new Date());
@@ -187,11 +186,9 @@ export function BookingScheduler({
       } catch (error) {
         console.error("Failed to load booked slots", error);
         if (active) {
-          pushToast({
-            title: "Kalender tidak sinkron",
+          toast.error("Kalender tidak sinkron", {
             description:
               "Slot yang sudah dibooking sementara tidak bisa ditampilkan.",
-            variant: "error",
           });
         }
       }
@@ -202,7 +199,7 @@ export function BookingScheduler({
     return () => {
       active = false;
     };
-  }, [courtId, pushToast]);
+  }, [courtId]);
 
   const checkSlotAvailability = useCallback(
     (date: Date, hour: number, durationHours: number) => {
