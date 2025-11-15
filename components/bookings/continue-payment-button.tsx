@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import Script from "next/script";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
+import { toast } from "sonner";
 
 type ContinuePaymentButtonProps = {
   snapToken: string | null;
@@ -19,16 +19,13 @@ export function ContinuePaymentButton({
   clientKey,
   snapScriptUrl,
 }: ContinuePaymentButtonProps) {
-  const { pushToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [snapReady, setSnapReady] = useState(false);
 
   const handleClick = useCallback(() => {
     if (!snapToken && !redirectUrl) {
-      pushToast({
-        title: "Pembayaran belum tersedia",
+      toast.info("Pembayaran belum tersedia", {
         description: "Hubungi admin apabila transaksi belum dibuat.",
-        variant: "info",
       });
       return;
     }
@@ -49,10 +46,8 @@ export function ContinuePaymentButton({
         return;
       }
 
-      pushToast({
-        title: "Midtrans belum siap",
+      toast.error("Midtrans belum siap", {
         description: "Muat ulang halaman atau hubungi admin.",
-        variant: "error",
       });
       return;
     }
@@ -62,34 +57,28 @@ export function ContinuePaymentButton({
     try {
       window.snap.pay(snapToken, {
         onSuccess: () => {
-          pushToast({
-            title: "Pembayaran berhasil",
+          toast.success("Pembayaran berhasil", {
             description: "Transaksi kamu telah dikonfirmasi oleh Midtrans.",
-            variant: "success",
           });
           window.location.reload();
         },
         onPending: () => {
-          pushToast({
-            title: "Masih menunggu",
+          toast.info("Masih menunggu", {
             description:
               "Kamu bisa kembali ke halaman ini kapan saja untuk menyelesaikan pembayaran.",
-            variant: "info",
           });
         },
         onError: (error) => {
           console.error("Midtrans Snap error", error);
-          pushToast({
-            title: "Pembayaran dibatalkan",
+          toast.error("Pembayaran dibatalkan", {
             description: "Coba ulangi proses pembayaran.",
-            variant: "error",
           });
         },
       });
     } finally {
       setIsLoading(false);
     }
-  }, [pushToast, redirectUrl, snapReady, snapToken]);
+  }, [redirectUrl, snapReady, snapToken]);
 
   return (
     <>

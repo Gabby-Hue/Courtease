@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sonner } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 const RATING_OPTIONS = [1, 2, 3, 4, 5];
 
@@ -23,7 +23,6 @@ export function BookingReviewForm({
   initialReview,
 }: BookingReviewFormProps) {
   const router = useRouter();
-  const { pushToast } = useToast();
   const [rating, setRating] = useState<number>(initialReview?.rating ?? 5);
   const [comment, setComment] = useState(initialReview?.comment ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,10 +30,8 @@ export function BookingReviewForm({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!rating) {
-      pushToast({
-        title: "Pilih rating",
+      toast.info("Pilih rating", {
         description: "Tentukan jumlah bintang sebelum mengirim review.",
-        variant: "info",
       });
       return;
     }
@@ -52,21 +49,17 @@ export function BookingReviewForm({
         throw new Error(payload.error ?? "Gagal menyimpan review.");
       }
 
-      pushToast({
-        title: "Review tersimpan",
+      toast.success("Review tersimpan", {
         description: "Pengalamanmu telah dibagikan ke forum komunitas.",
-        variant: "success",
       });
       router.refresh();
     } catch (error) {
       console.error("Failed to submit review", error);
-      pushToast({
-        title: "Tidak dapat mengirim review",
+      toast.error("Tidak dapat mengirim review", {
         description:
           error instanceof Error
             ? error.message
             : "Terjadi kesalahan tak terduga.",
-        variant: "error",
       });
     } finally {
       setIsSubmitting(false);
