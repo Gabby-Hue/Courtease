@@ -23,7 +23,7 @@ const DASHBOARD_BY_ROLE: Record<AppRole, string> = {
   user: "/",
 };
 
-export function LoginForm({
+export function ForgotPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
@@ -126,7 +126,7 @@ export function LoginForm({
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <a
-              href="#"
+              href="/auth/forgot-password"
               className="ml-auto text-sm underline-offset-4 hover:underline"
             >
               Forgot your password?

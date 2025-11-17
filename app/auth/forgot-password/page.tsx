@@ -1,9 +1,9 @@
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { LoginForm } from "@/components/auth/login-form";
+import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="bg-muted relative hidden lg:block">
@@ -25,7 +25,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm />
+            <ForgotPasswordForm />
           </div>
         </div>
       </div>
