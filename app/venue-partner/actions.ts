@@ -2,8 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-import { createServiceRoleClient } from "@/lib/supabase/service";
-
 export type PartnerApplicationState = {
   status: "idle" | "success" | "error";
   message?: string;

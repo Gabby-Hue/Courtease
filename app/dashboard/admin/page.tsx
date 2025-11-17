@@ -47,7 +47,7 @@ export default async function Page() {
     {
       title: "Laporan",
       url: "/dashboard/admin/reports",
-      icon: "LineChart",
+      icon: "NotepadText",
     },
     {
       title: "Pengaturan",
@@ -83,7 +83,9 @@ export default async function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/dashboard/admin">Dashboard</BreadcrumbLink>
+                  <BreadcrumbLink href="/dashboard/admin">
+                    Dashboard
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

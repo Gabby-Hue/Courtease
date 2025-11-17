@@ -55,7 +55,7 @@ export default async function Page() {
     {
       title: "Laporan",
       url: "/dashboard/venue/reports",
-      icon: "LineChart",
+      icon: "NotepadText",
     },
     {
       title: "Pengaturan",
@@ -64,20 +64,22 @@ export default async function Page() {
     },
   ];
 
-  const teams: TeamOption[] = (dashboardData.venues.length
-    ? dashboardData.venues
-    : [
-        {
-          id: "placeholder",
-          name: "Venue belum tersedia",
-          city: null,
-          district: null,
-        },
-      ]
+  const teams: TeamOption[] = (
+    dashboardData.venues.length
+      ? dashboardData.venues
+      : [
+          {
+            id: "placeholder",
+            name: "Venue belum tersedia",
+            city: null,
+            district: null,
+          },
+        ]
   ).map((venue) => ({
     id: venue.id,
     name: venue.name,
-    description: [venue.city, venue.district].filter(Boolean).join(", ") || null,
+    description:
+      [venue.city, venue.district].filter(Boolean).join(", ") || null,
     icon: "MapPin",
   }));
 
@@ -106,7 +108,9 @@ export default async function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/dashboard/venue">Dashboard</BreadcrumbLink>
+                  <BreadcrumbLink href="/dashboard/venue">
+                    Dashboard
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

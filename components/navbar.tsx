@@ -1,16 +1,17 @@
 "use client";
 
 import clsx from "clsx";
-import { Menu, Search, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { ModeToggle } from "./mode-toggle";
+import SearchBar from "./search-bar";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Explore", href: "/explore" },
-  { label: "Venue", href: "/venue" },
+  { label: "Venue", href: "/venues" },
   { label: "Forum", href: "/forum" },
 ];
 
@@ -24,6 +25,8 @@ const maskStyle: CSSProperties = {
   maskSize: "100px 109px",
   maskPosition: "center bottom",
 };
+// button template dark mode
+// dark:border-teal-200 dark:bg-teal-200
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -78,24 +81,20 @@ export default function Navbar() {
             <span className="text-lg font-bold">courtease</span>
           </Link>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              aria-label="Cari konten"
-              className="rounded-full border border-white p-2 bg-white text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:border-teal-200 dark:bg-teal-200 dark:text-teal-700 dark:hover:bg-teal-300"
-            >
-              <Search className="h-5 w-5" />
-            </button>
-            <ModeToggle />
+            <SearchBar />
+            <div className="text-orange-500 dark:text-teal-600">
+              <ModeToggle />
+            </div>
             <Link
-              href="#login"
-              className="rounded-full border-2 border-white bg-white px-3 py-1.5 text-sm font-semibold text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:border-teal-200 dark:bg-teal-200 dark:text-teal-700 dark:hover:bg-teal-300"
+              href="/auth/login"
+              className="rounded-full border-white bg-white p-2 text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:text-teal-600 dark:hover:bg-teal-300"
             >
-              Login
+              <LogIn className="h-5 w-5" />
             </Link>
             <button
               type="button"
               aria-label="Buka menu navigasi"
-              className="rounded-full border border-white p-2 bg-white text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:border-teal-200 dark:bg-teal-200 dark:text-teal-700 dark:hover:bg-teal-300"
+              className="rounded-full border-white bg-white p-2 text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:text-teal-600 dark:hover:bg-teal-300"
               onClick={() => setMenuOpen(true)}
             >
               <Menu className="h-5 w-5" />
@@ -128,27 +127,13 @@ export default function Navbar() {
             </nav>
           </div>
           <div className="flex items-center gap-3">
-            <div className="relative hidden md:block">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-              <input
-                type="search"
-                placeholder="Search"
-                className="w-40 md:w-56 lg:w-64 rounded-full border border-gray-300 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder-gray-500 transition focus:border-orange-500 focus:ring-2 focus:ring-orange-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:border-teal-400 dark:focus:ring-teal-300"
-              />
-            </div>
-            <button
-              type="button"
-              aria-label="Cari konten"
-              className="rounded-full border border-white p-2 bg-white text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:border-teal-200 dark:bg-teal-200 dark:text-teal-700 dark:hover:bg-teal-300 md:hidden"
-            >
-              <Search className="h-5 w-5" />
-            </button>
+            <SearchBar />
             <ModeToggle />
             <Link
               href="#login"
-              className="rounded-full border-2 border-white bg-white px-5 py-2 text-sm font-semibold text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:border-teal-200 dark:bg-teal-200 dark:text-teal-700 dark:hover:bg-teal-300"
+              className="rounded-full border-2 border-white bg-white px-3 py-2 text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:text-teal-600 dark:hover:bg-teal-300"
             >
-              Login
+              <LogIn className="h-5 w-5" />
             </Link>
           </div>
         </div>
@@ -195,16 +180,7 @@ export default function Navbar() {
             </button>
           </div>
           {/* Search bar at top of overlay - DIUBAH MENJADI FLAT */}
-          <div className="px-6 py-4">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
-              <input
-                type="search"
-                placeholder="Search"
-                className="w-full rounded-full border border-gray-300 bg-white py-2 pl-9 pr-4 text-sm text-gray-900 placeholder-gray-500 transition focus:border-orange-500 focus:ring-2 focus:ring-orange-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:border-teal-400 dark:focus:ring-teal-300"
-              />
-            </div>
-          </div>
+          <div className="px-6 py-4"></div>
           {/* Navigation links inside overlay - DIUBAH MENJADI FLAT */}
           <nav
             className="flex flex-col gap-2 px-6 py-4"
