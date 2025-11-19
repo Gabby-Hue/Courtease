@@ -14,79 +14,68 @@
  * remove the old search logic from there.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
 
-// Example dataset used to populate search results. Each item includes
-// a title, subtitle, participant count, relative date, and an optional
-// thumbnail URL. Feel free to adjust or replace with real data.
-const searchData = {
-  campaigns: [
-    {
-      id: 1,
-      title: "E-learning Fascinating Public Speaking",
-      subtitle: "Pusdiklat PSDM",
-      count: 153,
-      date: "4 years ago",
-      thumbnail: "https://via.placeholder.com/56x56.png?text=1",
-    },
-    {
-      id: 2,
-      title: "Lets Save Karnataka From Fascism",
-      subtitle: "PFI Dk",
-      count: 122,
-      date: "4 years ago",
-      thumbnail: "https://via.placeholder.com/56x56.png?text=2",
-    },
-    {
-      id: 3,
-      title: "TESDAMAN",
-      subtitle: "Tesdaman",
-      count: 4200,
-      date: "4 years ago",
-      thumbnail: "https://via.placeholder.com/56x56.png?text=3",
-    },
-  ],
-  collections: [
-    {
-      id: 1,
-      title: "Basic Collection Example",
-      subtitle: "John Doe",
-      count: 10,
-      date: "2 years ago",
-      thumbnail: "https://via.placeholder.com/56x56.png?text=C1",
-    },
-  ],
-  creators: [
-    {
-      id: 1,
-      title: "Creator Example",
-      subtitle: "@creator",
-      count: 50,
-      date: "1 year ago",
-      thumbnail: "https://via.placeholder.com/56x56.png?text=U1",
-    },
-  ],
+// Database search result type
+type SearchResult = {
+  type: "court" | "venue" | "forum";
+  title: string;
+  description: string;
+  href: string;
 };
 
-// Simple filtering function that returns a new object of the same
-// structure as searchData with each array filtered by the query. In a
-// production application, you might call your backend or use a fuzzy
-// matching library here.
-function filterSearchResults(query: string) {
-  const lower = query.toLowerCase();
-  const result: typeof searchData = {
-    campaigns: [],
-    collections: [],
-    creators: [],
-  };
-  (Object.keys(searchData) as Array<keyof typeof searchData>).forEach((key) => {
-    result[key] = searchData[key].filter((item) =>
-      item.title.toLowerCase().includes(lower),
-    );
-  });
-  return result;
+// Search categories for organizing results
+type SearchCategory = "courts" | "venues" | "forums";
+
+// Search results organized by category
+type SearchResults = {
+  courts: SearchResult[];
+  venues: SearchResult[];
+  forums: SearchResult[];
+};
+
+// Function to fetch search results from the database API
+async function fetchSearchResults(query: string): Promise<SearchResults> {
+  try {
+    const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch search results");
+    }
+
+    const { data } = await response.json();
+
+    // Organize results by category
+    const organizedResults: SearchResults = {
+      courts: [],
+      venues: [],
+      forums: [],
+    };
+
+    (data || []).forEach((item: SearchResult) => {
+      switch (item.type) {
+        case "court":
+          organizedResults.courts.push(item);
+          break;
+        case "venue":
+          organizedResults.venues.push(item);
+          break;
+        case "forum":
+          organizedResults.forums.push(item);
+          break;
+      }
+    });
+
+    return organizedResults;
+  } catch (error) {
+    console.error("Search error:", error);
+    return {
+      courts: [],
+      venues: [],
+      forums: [],
+    };
+  }
 }
 
 export default function SearchBar() {
@@ -94,13 +83,46 @@ export default function SearchBar() {
   const [query, setQuery] = useState<string>("");
   // Whether the overlay/dropdown is currently visible
   const [open, setOpen] = useState<boolean>(false);
-  // Active tab for categorised results
-  const [activeTab, setActiveTab] = useState<
-    "campaigns" | "collections" | "creators"
-  >("campaigns");
+  // Active tab for categorized results
+  const [activeTab, setActiveTab] = useState<SearchCategory>("courts");
+  // Search results from database
+  const [results, setResults] = useState<SearchResults>({
+    courts: [],
+    venues: [],
+    forums: [],
+  });
+  // Loading state for search
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // Filtered results recomputed whenever the query changes
-  const results = filterSearchResults(query);
+  // Fetch search results from database when query changes
+  const performSearch = useCallback(async (searchQuery: string) => {
+    if (searchQuery.trim().length === 0) {
+      setResults({ courts: [], venues: [], forums: [] });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const searchResults = await fetchSearchResults(searchQuery);
+      setResults(searchResults);
+    } catch (error) {
+      console.error("Search failed:", error);
+      setResults({ courts: [], venues: [], forums: [] });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Debounced search effect
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (query.trim().length > 0) {
+        performSearch(query);
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [query, performSearch]);
 
   // Close the overlay when the escape key is pressed
   useEffect(() => {
@@ -116,10 +138,11 @@ export default function SearchBar() {
   }, [open]);
 
   // Handle changes in the search input
+  // Handle input changes with proper search logic
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    // Show overlay only when there is text
+    // Show overlay when there is text
     setOpen(value.trim().length > 0);
   };
 
@@ -166,7 +189,7 @@ export default function SearchBar() {
           <div className="rounded-xl bg-white dark:bg-gray-900 shadow-lg overflow-hidden">
             {/* Tabs for categories */}
             <div className="flex border-b border-gray-200 dark:border-gray-700 text-sm font-medium">
-              {(["campaigns", "collections", "creators"] as const).map(
+              {(["courts", "venues", "forums"] as const).map(
                 (tab) => (
                   <button
                     key={tab}
@@ -184,38 +207,28 @@ export default function SearchBar() {
             </div>
             {/* Results list */}
             <div className="max-h-72 overflow-y-auto py-2">
-              {results[activeTab].length === 0 ? (
+              {loading ? (
+                <p className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                  Searching...
+                </p>
+              ) : results[activeTab].length === 0 ? (
                 <p className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                   No results found.
                 </p>
               ) : (
-                results[activeTab].map((item) => (
+                results[activeTab].map((item, index) => (
                   <Link
-                    href="#"
-                    key={item.id}
+                    href={item.href}
+                    key={`${item.type}-${index}`}
                     className="flex items-center gap-3 px-4 py-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
-                    {item.thumbnail && (
-                      <img
-                        src={item.thumbnail}
-                        alt="thumbnail"
-                        width={56}
-                        height={56}
-                        className="h-14 w-14 rounded-md object-cover"
-                      />
-                    )}
                     <div className="flex-1">
                       <p className="line-clamp-1 text-sm font-semibold text-gray-900 dark:text-white">
                         {item.title}
                       </p>
                       <p className="line-clamp-1 text-xs text-gray-500 dark:text-gray-400">
-                        {item.subtitle}
+                        {item.description}
                       </p>
-                      <div className="mt-1 flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
-                        <span>{item.count.toLocaleString()}</span>
-                        <span>•</span>
-                        <span>{item.date}</span>
-                      </div>
                     </div>
                   </Link>
                 ))
@@ -225,7 +238,7 @@ export default function SearchBar() {
             <div className="border-t border-gray-200 dark:border-gray-700 p-4">
               <button className="flex w-full items-center justify-center gap-2 rounded-full bg-black py-2 text-sm font-semibold text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200">
                 <Search className="h-4 w-4" />
-                See All Campaigns
+                See All Results
               </button>
             </div>
           </div>
@@ -270,7 +283,7 @@ export default function SearchBar() {
           </div>
           {/* Tabs */}
           <div className="flex border-b border-gray-200 dark:border-gray-700 text-sm font-medium">
-            {(["campaigns", "collections", "creators"] as const).map((tab) => (
+            {(["courts", "venues", "forums"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -286,38 +299,28 @@ export default function SearchBar() {
           </div>
           {/* Results list */}
           <div className="flex-1 overflow-y-auto py-2">
-            {results[activeTab].length === 0 ? (
+            {loading ? (
+              <p className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                Searching...
+              </p>
+            ) : results[activeTab].length === 0 ? (
               <p className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                 No results found.
               </p>
             ) : (
-              results[activeTab].map((item) => (
+              results[activeTab].map((item, index) => (
                 <Link
-                  href="#"
-                  key={item.id}
+                  href={item.href}
+                  key={`${item.type}-${index}`}
                   className="flex items-center gap-3 px-4 py-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
-                  {item.thumbnail && (
-                    <img
-                      src={item.thumbnail}
-                      alt="thumbnail"
-                      width={56}
-                      height={56}
-                      className="h-14 w-14 rounded-md object-cover"
-                    />
-                  )}
                   <div className="flex-1">
                     <p className="line-clamp-1 text-sm font-semibold text-gray-900 dark:text-white">
                       {item.title}
                     </p>
                     <p className="line-clamp-1 text-xs text-gray-500 dark:text-gray-400">
-                      {item.subtitle}
+                      {item.description}
                     </p>
-                    <div className="mt-1 flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
-                      <span>{item.count.toLocaleString()}</span>
-                      <span>•</span>
-                      <span>{item.date}</span>
-                    </div>
                   </div>
                 </Link>
               ))
@@ -327,7 +330,7 @@ export default function SearchBar() {
           <div className="p-4">
             <button className="flex w-full items-center justify-center gap-2 rounded-full bg-black py-2 text-sm font-semibold text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200">
               <Search className="h-4 w-4" />
-              See All Campaigns
+              See All Results
             </button>
           </div>
         </div>
