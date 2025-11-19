@@ -35,7 +35,21 @@ type AuthenticatedUser = {
   email: string;
   fullName: string | null;
   avatarUrl: string | null;
+  role: string | null;
 };
+
+// Helper function to get dashboard URL based on user role
+function getDashboardUrl(userRole: string | null): string {
+  switch (userRole) {
+    case "admin":
+      return "/dashboard/admin";
+    case "venue_partner":
+      return "/dashboard/venue";
+    case "user":
+    default:
+      return "/dashboard";
+  }
+}
 
 export function NavbarAuthMenu({
   variant = "inline",
@@ -80,7 +94,7 @@ export function NavbarAuthMenu({
 
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
-          .select("full_name, avatar_url")
+          .select("full_name, avatar_url, role")
           .eq("id", authUser.id)
           .maybeSingle();
 
@@ -102,6 +116,7 @@ export function NavbarAuthMenu({
               (typeof authUser.user_metadata?.avatar_url === "string"
                 ? (authUser.user_metadata.avatar_url as string)
                 : null),
+            role: profile?.role as string | null ?? null,
           });
           setLoading(false);
         }
@@ -268,7 +283,7 @@ export function NavbarAuthMenu({
         <div className="grid gap-2">
           <Button asChild className="w-full rounded-full">
             <Link
-              href="/dashboard/admin"
+              href={getDashboardUrl(user?.role ?? null)}
               onClick={() => {
                 actionRef.current?.();
               }}
@@ -277,6 +292,15 @@ export function NavbarAuthMenu({
               <LayoutDashboard className="ml-2 h-4 w-4" />
             </Link>
           </Button>
+          {user?.role && (
+            <div className="text-center">
+              <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+                {user.role === "admin" ? "Admin" :
+                 user.role === "venue_partner" ? "Venue Partner" :
+                 user.role === "user" ? "User" : user.role}
+              </span>
+            </div>
+          )}
           <Button
             variant="outline"
             className="w-full rounded-full border-red-200 text-red-600 hover:border-red-300 hover:bg-red-100 dark:border-red-500/40 dark:text-red-200 dark:hover:bg-red-500/10"
@@ -321,9 +345,18 @@ export function NavbarAuthMenu({
         <DropdownMenuLabel className="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">
           Akun kamu
         </DropdownMenuLabel>
+        {user?.role && (
+          <div className="px-2 py-1">
+            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+              {user.role === "admin" ? "Admin" :
+               user.role === "venue_partner" ? "Venue Partner" :
+               user.role === "user" ? "User" : user.role}
+            </span>
+          </div>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/dashboard/admin" className="flex items-center gap-2">
+          <Link href={getDashboardUrl(user?.role ?? null)} className="flex items-center gap-2">
             <LayoutDashboard className="h-4 w-4" /> Dashboard
           </Link>
         </DropdownMenuItem>

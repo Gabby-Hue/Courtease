@@ -1,7 +1,11 @@
-import { NextResponse } from "next/server";
+import { createSuccessResponse, handleApiError } from "@/lib/api/utils";
 import { fetchCourtSummaries } from "@/lib/supabase/queries";
 
 export async function GET() {
-  const courts = await fetchCourtSummaries();
-  return NextResponse.json({ data: courts });
+  try {
+    const courts = await fetchCourtSummaries();
+    return createSuccessResponse(courts);
+  } catch (error) {
+    return handleApiError(error, "venues");
+  }
 }

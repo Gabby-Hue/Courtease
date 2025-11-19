@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { ModeToggle } from "./mode-toggle";
 import SearchBar from "./search-bar";
+import { NavbarAuthMenu } from "./navbar-auth-menu";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -56,7 +57,7 @@ export default function Navbar() {
   return (
     <header
       className={clsx(
-        "isolate sticky top-0 z-50 w-full transition-shadow duration-300",
+        "isolate sticky top-0 z-500 w-full transition-shadow duration-300",
       )}
     >
       {/* wave navbar - TIDAK DIUBAH */}
@@ -85,12 +86,12 @@ export default function Navbar() {
             <div className="text-orange-500 dark:text-teal-600">
               <ModeToggle />
             </div>
-            <Link
-              href="/auth/login"
-              className="rounded-full border-white bg-white p-2 text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:text-teal-600 dark:hover:bg-teal-300"
-            >
-              <LogIn className="h-5 w-5" />
-            </Link>
+            <div className="scale-75 origin-right">
+              <NavbarAuthMenu
+                variant="inline"
+                onAction={() => setMenuOpen(false)}
+              />
+            </div>
             <button
               type="button"
               aria-label="Buka menu navigasi"
@@ -129,12 +130,7 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             <SearchBar />
             <ModeToggle />
-            <Link
-              href="#login"
-              className="rounded-full border-2 border-white bg-white px-3 py-2 text-orange-500 transition-colors duration-200 hover:bg-gray-100 dark:text-teal-600 dark:hover:bg-teal-300"
-            >
-              <LogIn className="h-5 w-5" />
-            </Link>
+            <NavbarAuthMenu variant="inline" onAction={() => {}} />
           </div>
         </div>
       </div>
@@ -202,15 +198,12 @@ export default function Navbar() {
             <div className="flex items-center justify-between">
               {/* Dark mode toggle */}
               <ModeToggle />
-              {/* Login button */}
-              <Link
-                href="#login"
-                onClick={() => setMenuOpen(false)}
-                className="ml-2 flex-1 rounded-full bg-orange-500 px-4 py-2.5 text-center text-sm font-semibold text-white transition-colors duration-200 hover:bg-orange-600 dark:bg-teal-600 dark:hover:bg-teal-700"
-              >
-                Login
-              </Link>
             </div>
+            {/* Authentication menu */}
+            <NavbarAuthMenu
+              variant="stacked"
+              onAction={() => setMenuOpen(false)}
+            />
           </div>
         </div>
       </div>
